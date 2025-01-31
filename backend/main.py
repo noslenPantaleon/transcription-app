@@ -1,5 +1,7 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+
 import whisper
 import os
 from tempfile import NamedTemporaryFile
@@ -9,6 +11,21 @@ import subprocess
 # Initialize FastAPI app
 app = FastAPI()
 
+# Ensure FFmpeg path is set in the environment
+os.environ["PATH"] += os.pathsep + "C:\\ffmpeg\\bin"
+
+
+origins = [
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 # Load Whisper model
 model = whisper.load_model("base")
 
@@ -40,7 +57,9 @@ async def transcribe_audio(file: UploadFile = File(...)):
         transcription = result.get("text", "No transcription available.")
 
         # Return the transcription result
-        return JSONResponse(content={"transcription": transcription})
+        #return JSONResponse(content={"transcription": transcription})
+        return JSONResponse(content={"fileName": file.filename, "file": transcription})
+
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

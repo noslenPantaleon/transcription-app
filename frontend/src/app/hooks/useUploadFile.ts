@@ -33,7 +33,7 @@ export const useUploadFile = () => {
 
   const handleUpload = (file: File) => {
     const formData = new FormData();
-    formData.append('image', file);
+    formData.append('file', file);
     mutate(formData);
   };
 
