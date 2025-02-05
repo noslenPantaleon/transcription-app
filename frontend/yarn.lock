@@ -392,6 +392,13 @@
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
   integrity sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==
 
+"@types/next@^9.0.0":
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/@types/next/-/next-9.0.0.tgz#29aca06f8a5cfffc974a83b87e52ca57b2a506c4"
+  integrity sha512-gnBXM8rP1mnCgT1uE2z8SnpFTKRWReJlhbZLZkOLq/CH1ifvTNwjIVtXvsywTy1dwVklf+y/MB0Eh6FOa94yrg==
+  dependencies:
+    next "*"
+
 "@types/node@^20":
   version "20.17.16"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-20.17.16.tgz#b33b0edc1bf925b27349e494b871ca4451fabab4"
@@ -491,6 +498,11 @@
   dependencies:
     "@typescript-eslint/types" "8.22.0"
     eslint-visitor-keys "^4.2.0"
+
+"@wavesurfer/react@^1.0.9":
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/@wavesurfer/react/-/react-1.0.9.tgz#7ee038d48ba22293858dd575b38c6db153c886f7"
+  integrity sha512-HD3x+p48kWITd3tCOA7KG+6zae8btulNjSTdnRmgrtp9/XPzXc61ZCaPgbqT0gioPGhIcvBcpXZAmnhE8lUDBw==
 
 acorn-jsx@^5.3.2:
   version "5.3.2"
@@ -2091,7 +2103,7 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==
 
-next@15.1.6:
+next@*, next@15.1.6:
   version "15.1.6"
   resolved "https://registry.yarnpkg.com/next/-/next-15.1.6.tgz#ce22fd0a8f36da1fc4aba86e3ec7e98eb248c555"
   integrity sha512-Hch4wzbaX0vKQtalpXvUiw5sYivBy4cm5rzUKrBnUB/y436LGrvOUqYvlSeNVCWFO/770gDlltR9gqZH62ct4Q==
@@ -2992,6 +3004,11 @@ util-deprecate@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==
+
+wavesurfer.js@^7.9.0:
+  version "7.9.0"
+  resolved "https://registry.yarnpkg.com/wavesurfer.js/-/wavesurfer.js-7.9.0.tgz#03a8ab15c46464521cfcbfc4d6d90d3608f0ac7a"
+  integrity sha512-ZzyHn+htSsZ0omPSYaAbhnoMqlLVO1lR8b+hACMBEvpZmkScJn0AmQkBo2a5u5UtOuCVc0Xv/tM+KtJVv5yvtQ==
 
 which-boxed-primitive@^1.1.0, which-boxed-primitive@^1.1.1:
   version "1.1.1"
