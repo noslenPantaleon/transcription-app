@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import { useUploadFile } from "../hooks/useUploadFile";
+import TranscriptionDisplay from "./TranscriptionDisplay";
 
 const UploadForm = () => {
   const { handleUpload, isPending, uploadedFile, error } = useUploadFile();
@@ -58,30 +59,28 @@ const UploadForm = () => {
   };
 
   return (
-    <div className="text-white min-h-screen min-w-screen flex items-center justify-center p-4">
+    <div className="text-white min-h-screen min-w-screen flex items-center justify-center flex-wrap p-4">
       <form
-        className="bg-gray-800 p-6 rounded-2xl shadow-lg w-full max-w-md"
+        className="p-6 rounded-2xl shadow-lg w-full max-w-md"
         onSubmit={handleSubmit}
       >
         <h1 className="text-2xl font-bold mb-4 text-center">
           Upload or Record Audio
         </h1>
 
-        {/* File Upload */}
         <input
           type="file"
           accept="audio/*,video/*"
           onChange={handleFileChange}
-          className="block w-full text-white bg-gray-700 rounded-lg p-2 mb-4 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-gray-600 file:text-gray-100 hover:file:bg-gray-500"
+          className="block w-full text-white border-2 border-solid border-sky-500 rounded-lg p-2 mb-4 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-transparent file:text-gray-100  file:border-solid file:border-sky-500 file:bg-indigo-950  hover:file:bg-indigo-500"
         />
 
-        {/* Audio Recording */}
         <div className="flex items-center gap-4 mb-4">
           {!isRecording ? (
             <button
               type="button"
               onClick={startRecording}
-              className="bg-green-600 text-white py-2 px-4 rounded-xl hover:bg-green-500"
+              className="border-2 border-solid border-emerald-600  text-white py-2 px-4 rounded-xl hover:bg-green-500"
             >
               Start Recording
             </button>
@@ -113,10 +112,13 @@ const UploadForm = () => {
         <button
           type="submit"
           disabled={(!selectedFile && !recordedBlob) || isPending}
-          className="w-full mt-4 bg-blue-600 text-white py-2 px-4 rounded-xl hover:bg-blue-500 disabled:bg-gray-700"
+          className=" w-full mt-4 bg-indigo-950 text-white py-2 px-4 border-2 border-solid border-sky-500  rounded-xl hover:bg-indigo-500 disabled:bg-transparent"
         >
           {isPending ? "Uploading..." : "Upload File"}
         </button>
+        <div className="mt-8">
+          <TranscriptionDisplay transcription={uploadedFile?.file.toString()} />
+        </div>
       </form>
     </div>
   );
