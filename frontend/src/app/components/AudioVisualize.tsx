@@ -37,7 +37,7 @@ const AudioVisualize = ({ audioUrl }: AudioVisualizeProps) => {
 
       <button
         onClick={onPlayPause}
-        className="border-2 border-solid border-emerald-600  text-white py-2 px-4 rounded-xl hover:bg-green-500"
+        className="mt-4 border-2 border-solid border-emerald-600  text-white py-2 px-4 rounded-xl hover:bg-green-500"
         >
         {isPlaying ? "Pause" : "Play"}
       </button>

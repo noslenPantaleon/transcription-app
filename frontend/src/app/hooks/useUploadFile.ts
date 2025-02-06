@@ -14,7 +14,7 @@ export const useUploadFile = () => {
   const [uploadedFile, setUploadedFile] = useState<Upload>();
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, error } = useMutation<Upload, Error, FormData>({
+  const { mutateAsync, isPending, error } = useMutation<Upload, Error, FormData>({
     mutationFn: uploadFile,
     onSuccess: (data: Upload) => {
       // const blobUrl = URL.createObjectURL(data);
@@ -31,10 +31,11 @@ export const useUploadFile = () => {
     },
   });
 
-  const handleUpload = (file: File) => {
+  const handleUpload = async (file: File) => {
     const formData = new FormData();
-    formData.append('file', file);
-    mutate(formData);
+    formData.append("file", file);
+    const result = await mutateAsync(formData); // Await the result
+    return result; // Return the result
   };
 
   return { handleUpload, isPending, uploadedFile, error };
