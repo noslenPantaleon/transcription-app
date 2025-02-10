@@ -10,9 +10,9 @@ const TranscriptionsDashboard = () => {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
 
   return (
-    <div className="text-white max-h-screen min-w-screen flex items-center justify-center flex-wrap p-4">
+    <div className="text-white max-h-screen min-w-screen flex items-center flex-wrap justify-center p-4">
       <UploadForm setUploadedFile={setUploadedFile} setAudioUrl={setAudioUrl} />
-      <div>
+      <div className="mt-8">
         <TranscriptionDisplay transcription={uploadedFile?.file.toString()} />
         {audioUrl && <AudioVisualize audioUrl={audioUrl} />}
       </div>

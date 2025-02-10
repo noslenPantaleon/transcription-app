@@ -1,7 +1,11 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, Ref } from "react";
 import { useUploadFile } from "../hooks/useUploadFile";
+import { IconMic, IconStop, IconTrash } from "../assets/icons";
+import Image from "next/image";
+import { Loading } from "./commons/Loading";
+import { Input } from "./commons/Input/Input";
 
 interface UploadFormProps {
   setUploadedFile: (file: any) => void;
@@ -50,6 +54,7 @@ const UploadForm = ({ setUploadedFile, setAudioUrl }: UploadFormProps) => {
         setUploadedFile(uploadedFile);
       });
     }
+    setSelectedFile(null);
   };
   const startRecording = async () => {
     try {
@@ -82,13 +87,18 @@ const UploadForm = ({ setUploadedFile, setAudioUrl }: UploadFormProps) => {
     setIsRecording(false);
   };
 
+  const clearInputRef = useRef<() => void | null>(null);
+
   const clearRecording = () => {
     setRecordedBlob(null);
     setAudioUrl(null);
     setSelectedFile(null);
     setUploadedFile(null);
-  };
 
+    if (clearInputRef.current) {
+      clearInputRef.current(); // Call the clearInput function
+    }
+  };
   const playRecordedAudio = () => {
     if (audioRef.current) {
       audioRef.current.play();
@@ -100,43 +110,48 @@ const UploadForm = ({ setUploadedFile, setAudioUrl }: UploadFormProps) => {
       className="p-6 rounded-2xl shadow-lg w-full max-w-md"
       onSubmit={handleSubmit}
     >
-      <h1 className="text-2xl font-bold mb-4 text-center">
-        Upload or Record Audio
-      </h1>
-
-      <input
-        type="file"
-        accept="audio/*,video/*"
-        onChange={handleFileChange}
-        className="block w-full text-white border-2 border-solid border-sky-500 rounded-lg p-2 mb-4 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-transparent file:text-gray-100  file:border-solid file:border-sky-500 file:bg-indigo-950  hover:file:bg-indigo-500"
+      <Input
+        handleFile={handleFileChange}
+        heading="Click to upload"
+        subHeading="or drag and drop"
+        fileType="MP4 WAV MP3"
+        setClearInput={(func) => (clearInputRef.current = func)}
       />
 
-      <div className="flex items-center gap-4 mb-4">
+      <div className="flex items-center justify-center gap-4 h-40 w-full ">
         {!isRecording ? (
-          <button
-            type="button"
+          <div
             onClick={startRecording}
-            className="border-2 border-solid border-emerald-600  text-white py-2 px-4 rounded-xl hover:bg-green-500"
+            className="flex flex-col gap-4 items-center
+            justify-center py-4 px-4 cursor-pointer rounded-md border-2 border-indigo-500 hover:bg-indigo-500"
           >
-            Start Recording
-          </button>
+            <div className="w-10">
+              <Image src={IconMic} alt="Icon mic" />
+            </div>
+            <p>Start Recording</p>
+          </div>
         ) : (
-          <button
-            type="button"
+          <div
             onClick={stopRecording}
-            className="bg-red-600 text-white py-2 px-4 rounded-xl hover:bg-red-500"
+            className="flex items-center justify-center flex-col gap-4 cursor-pointer  text-white py-4 px-4 "
           >
-            Stop Recording
-          </button>
+            <div className="w-10">
+              <Image src={IconStop} alt="Icon mic" />
+            </div>
+            <p> Stop Recording</p>
+          </div>
         )}
-
-        <button
-          type="button"
-          onClick={clearRecording}
-          className="border-2 border-solid border-yellow-600  text-white py-2 px-4 rounded-xl hover:bg-green-500"
-        >
-          Clear Recording
-        </button>
+        {recordedBlob && (
+          <div
+            onClick={clearRecording}
+            className="flex items-center justify-center flex-col gap-4 cursor-pointer  text-white py-4 px-4 rounded-md border-2 border-indigo-500 hover:bg-red-500"
+          >
+            <div className="w-10">
+              <Image src={IconTrash} alt="Icon mic" />
+            </div>
+            <p> Clear Recording</p>
+          </div>
+        )}
       </div>
 
       {recordedBlob && (
@@ -145,16 +160,28 @@ const UploadForm = ({ setUploadedFile, setAudioUrl }: UploadFormProps) => {
         </p>
       )}
 
-      {isPending && <p className="text-yellow-400">Uploading...</p>}
-      {error && <p className="text-red-400">Error: {error.message}</p>}
+      {selectedFile &&
+        (!isPending ? (
+          <p className="text-yellow-400 text-xs"> Recording ready to upload:</p>
+        ) : (
+          ""
+        ))}
 
-      <button
-        type="submit"
-        disabled={(!selectedFile && !recordedBlob) || isPending}
-        className=" w-full mt-4 bg-indigo-950 text-white py-2 px-4 border-2 border-solid border-sky-500  rounded-xl hover:bg-indigo-500 disabled:bg-transparent"
-      >
-        {isPending ? "Uploading..." : "Upload File"}
-      </button>
+      {isPending && <p className="text-yellow-400 py-4">Uploading...</p>}
+      {error && <p className="text-red-400">Error: {error.message}</p>}
+      {isPending ? (
+        <div className="flex w-full mt-4 items-center justify-center">
+          <Loading />
+        </div>
+      ) : (
+        <button
+          type="submit"
+          disabled={(!selectedFile && !recordedBlob) || isPending}
+          className=" w-full mt-4  disabled:border-slate-500 disabled:text-gray-500 text-white py-2 px-4 border-2 border-solid border-sky-500  rounded-xl hover:bg-indigo-500 disabled:bg-transparent"
+        >
+          create transcription
+        </button>
+      )}
     </form>
   );
 };
