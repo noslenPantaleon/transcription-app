@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect, Ref } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useUploadFile } from "../hooks/useUploadFile";
 import { IconMic, IconStop, IconTrash } from "../assets/icons";
 import Image from "next/image";
@@ -96,7 +96,7 @@ const UploadForm = ({ setUploadedFile, setAudioUrl }: UploadFormProps) => {
     setUploadedFile(null);
 
     if (clearInputRef.current) {
-      clearInputRef.current(); // Call the clearInput function
+      clearInputRef.current();
     }
   };
   const playRecordedAudio = () => {
@@ -113,7 +113,7 @@ const UploadForm = ({ setUploadedFile, setAudioUrl }: UploadFormProps) => {
       <Input
         handleFile={handleFileChange}
         heading="Click to upload"
-        subHeading="or drag and drop"
+        subHeading=" or drag and drop"
         fileType="MP4 WAV MP3"
         setClearInput={(func) => (clearInputRef.current = func)}
       />
