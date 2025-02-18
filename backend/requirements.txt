@@ -1,0 +1,11 @@
+fastapi[standard]
+pydantic
+pydantic_settings
+psycopg2
+openai-whisper
+python-dotenv
+pip
+request
+SQLAlchemy
+
+pip install git+https://github.com/openai/whisper.git

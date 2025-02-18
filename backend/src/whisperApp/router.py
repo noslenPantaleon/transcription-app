@@ -1,36 +1,27 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
-
-import whisper
+from fastapi import APIRouter, Depends, File, UploadFile, BackgroundTasks
 import os
 from tempfile import NamedTemporaryFile
 import shutil
 import subprocess
+import whisper
+from sqlalchemy.orm import Session
+from .dependencies import get_db_session
+from sqlalchemy.orm import Session
+from . import schemas, service
 
-# Initialize FastAPI app
-app = FastAPI()
-
-# Ensure FFmpeg path is set in the environment
-os.environ["PATH"] += os.pathsep + "C:\\ffmpeg\\bin"
-
-
-origins = [
-    "http://localhost:3000",
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-# Load Whisper model
+whisper_router= APIRouter()
 model = whisper.load_model("base")
 
-@app.post("/transcribe/")
-async def transcribe_audio(file: UploadFile = File(...)):
+@whisper_router.get("/")
+async def root():
+    return {"message": "Welcome to the Whisper Transcription API!"}
+
+
+
+@whisper_router.post("/transcribe/", response_model=schemas.Transcription)
+async def transcribe_audio(file: UploadFile = File(...),  db: Session = Depends(get_db_session)):
     # Ensure file type is audio or video
     if not (file.content_type.startswith("audio") or file.content_type.startswith("video")):
         raise HTTPException(status_code=400, detail="Invalid file type. Please upload an audio or video file.")
@@ -55,9 +46,8 @@ async def transcribe_audio(file: UploadFile = File(...)):
         # Transcribe the audio using Whisper
         result = model.transcribe(audio_filename)
         transcription = result.get("text", "No transcription available.")
+        #service.create_transcriptions(db=db, transcription_data=transcription)
 
-        # Return the transcription result
-        #return JSONResponse(content={"transcription": transcription})
         return JSONResponse(content={"fileName": file.filename, "file": transcription})
 
 
@@ -70,7 +60,3 @@ async def transcribe_audio(file: UploadFile = File(...)):
             os.remove(temp_filename)
         if os.path.exists(audio_filename) and audio_filename != temp_filename:
             os.remove(audio_filename)
-
-@app.get("/")
-async def root():
-    return {"message": "Welcome to the Whisper Transcription API!"}
