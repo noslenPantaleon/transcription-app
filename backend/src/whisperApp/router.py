@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from .dependencies import get_db_session
 from sqlalchemy.orm import Session
 from . import schemas, service
+from typing import List
 
 whisper_router= APIRouter()
 model = whisper.load_model("base")
@@ -18,10 +19,30 @@ model = whisper.load_model("base")
 async def root():
     return {"message": "Welcome to the Whisper Transcription API!"}
 
+@whisper_router.get("/transcriptions/", response_model=List[schemas.Transcription])
+def read_transcriptions(skip: int = 0, limit: int = 10, db: Session = Depends(get_db_session)):
+    transcription = service.get_transcriptions(db, skip=skip, limit=limit)
+    return transcription
 
+@whisper_router.get("/transcription/{transcription_id}", response_model=schemas.Transcription)
+def get_transcription_id(transcription_id: int, db: Session = Depends(get_db_session)):
+    transcription = service.get_transcription(db, transcription_id)
+    if transcription is None:
+        raise HTTPException(status_code=404, detail="Transcription not found")
+    return transcription
+
+@whisper_router.post("/transcription/update{transcription_id}", response_model=schemas.TranscriptionUpdate)
+def update_transcription(transcription_id: int, transcription: schemas.TranscriptionUpdate, db: Session = Depends(get_db_session)):
+    updated_transcription = service.update_transcription(db, transcription_id, transcription)
+    return updated_transcription
+
+@whisper_router.delete("/transcriptions/delete{transcription_id}", response_model=schemas.Transcription)
+def delete_transcription(transcription_id: int, db: Session = Depends(get_db_session)):
+    transcription = service.delete_transcription(db, transcription_id)
+    return transcription
 
 @whisper_router.post("/transcribe/", response_model=schemas.Transcription)
-async def transcribe_audio(file: UploadFile = File(...),  db: Session = Depends(get_db_session)):
+async def transcribe_audio(file: UploadFile = File(...), db: Session = Depends(get_db_session)):
     # Ensure file type is audio or video
     if not (file.content_type.startswith("audio") or file.content_type.startswith("video")):
         raise HTTPException(status_code=400, detail="Invalid file type. Please upload an audio or video file.")
