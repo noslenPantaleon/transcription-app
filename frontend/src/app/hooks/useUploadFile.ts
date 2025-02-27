@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 //import { toast } from 'react-toastify';
-import { uploadFile } from '../services/uploadFile';
+import { uploadFile } from '../services/uploadFile.js';
 
 interface Upload {
-  fileName: string;
-  file: string;
+  file_name: string;
+  transcription_text: string;
 }
 
 export const useUploadFile = () => {

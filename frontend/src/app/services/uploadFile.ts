@@ -2,8 +2,8 @@ import axios from 'axios';
 
 
 interface Upload {
-  fileName: string;
-  file: string;
+  file_name: string;
+  transcription_text: string;
 }
 export const uploadFile = async (formData: FormData): Promise<Upload> => {
   try {

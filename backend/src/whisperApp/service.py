@@ -11,8 +11,9 @@ def get_transcriptions(db: Session, skip: int = 0, limit: int = 10):
     return db.query(models.Transcription).offset(skip).limit(limit).all()
 
 
-def create_transcriptions(db: Session, transcription_data:schemas.TranscriptionCreate):
-    if type(transcription_data) == dict:
+
+def create_transcriptions(db: Session, transcription_data: schemas.TranscriptionCreate):
+    if isinstance(transcription_data, dict):
         db_transcriptions = models.Transcription(**transcription_data)
     else:
         db_transcriptions = models.Transcription(**transcription_data.model_dump())
@@ -20,6 +21,17 @@ def create_transcriptions(db: Session, transcription_data:schemas.TranscriptionC
     db.commit()
     db.refresh(db_transcriptions)
     return db_transcriptions
+
+
+# def create_transcriptions(db: Session, transcription_data:schemas.TranscriptionCreate):
+#     if type(transcription_data) == dict:
+#         db_transcriptions = models.Transcription(**transcription_data)
+#     else:
+#         db_transcriptions = models.Transcription(**transcription_data.model_dump())
+#     db.add(db_transcriptions)
+#     db.commit()
+#     db.refresh(db_transcriptions)
+#     return db_transcriptions
     
 
 def update_transcription(db: Session, transcription_id: int, transcription: schemas.TranscriptionUpdate):

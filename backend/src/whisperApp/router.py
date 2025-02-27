@@ -46,10 +46,13 @@ async def transcribe_audio(file: UploadFile = File(...),  db: Session = Depends(
         # Transcribe the audio using Whisper
         result = model.transcribe(audio_filename)
         transcription = result.get("text", "No transcription available.")
-        #service.create_transcriptions(db=db, transcription_data=transcription)
-
-        return JSONResponse(content={"fileName": file.filename, "file": transcription})
-
+        print(transcription)
+        print(type(transcription))
+        transcription_entry = schemas.TranscriptionCreate(
+        file_name=file.filename,
+        transcription_text=transcription)
+        db_transcription = service.create_transcriptions(db=db, transcription_data=transcription_entry)
+        return db_transcription  # This will match `schemas.Transcription`
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

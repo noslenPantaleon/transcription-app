@@ -4,8 +4,8 @@ from typing import Optional
 
 
 class TranscriptionBase(BaseModel):
-    fileName: str 
-    file: str 
+    file_name: str 
+    transcription_text: str 
 
 
 class TranscriptionCreate(TranscriptionBase):
@@ -17,7 +17,7 @@ class TranscriptionUpdate(TranscriptionBase):
 
 
 class TranscriptionInDBBase(TranscriptionBase):
-    Id: int
+    id: int
     created_at: datetime
 
     class Config:
