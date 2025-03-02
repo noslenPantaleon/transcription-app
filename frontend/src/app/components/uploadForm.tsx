@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useUploadFile } from "../hooks/useUploadFile";
 import { IconMic, IconStop, IconTrash } from "../assets/icons";
 import Image from "next/image";
-import { Loading } from "./commons/Loading";
+import { Loading } from "./commons/Input/Loading";
 import { Input } from "./commons/Input/Input";
 
 interface UploadFormProps {

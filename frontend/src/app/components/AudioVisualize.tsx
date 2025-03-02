@@ -8,7 +8,7 @@ const WavesurferPlayer = dynamic(() => import("@wavesurfer/react"), {
 });
 
 interface AudioVisualizeProps {
-  audioUrl: string; // Prop to receive the audio URL
+  audioUrl: string;
 }
 
 const AudioVisualize = ({ audioUrl }: AudioVisualizeProps) => {
@@ -29,7 +29,7 @@ const AudioVisualize = ({ audioUrl }: AudioVisualizeProps) => {
       <WavesurferPlayer
         height={100}
         waveColor="violet"
-        url={audioUrl} // Use the audioUrl prop
+        url={audioUrl}
         onReady={onReady}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
@@ -38,7 +38,7 @@ const AudioVisualize = ({ audioUrl }: AudioVisualizeProps) => {
       <button
         onClick={onPlayPause}
         className="mt-4 border-2 border-solid border-emerald-600  text-white py-2 px-4 rounded-xl hover:bg-green-500"
-        >
+      >
         {isPlaying ? "Pause" : "Play"}
       </button>
     </div>

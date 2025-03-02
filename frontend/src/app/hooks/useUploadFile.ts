@@ -23,19 +23,24 @@ export const useUploadFile = () => {
       queryClient.invalidateQueries({
         predicate: (query) => query.queryKey?.[0] === 'uploadedFiles',
       });
+      queryClient.invalidateQueries({ queryKey: ['transcriptions'] });
     },
-
+    
     onError: (error: unknown) => {
       //toast.error('Error uploading file!');
       console.error(error);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['uploadedFiles'] });
+      queryClient.invalidateQueries({ queryKey: ['transcriptions'] });
     },
   });
 
   const handleUpload = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
-    const result = await mutateAsync(formData); // Await the result
-    return result; // Return the result
+    const result = await mutateAsync(formData); 
+    return result; 
   };
 
   return { handleUpload, isPending, uploadedFile, error };

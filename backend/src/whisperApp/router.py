@@ -20,7 +20,7 @@ async def root():
     return {"message": "Welcome to the Whisper Transcription API!"}
 
 @whisper_router.get("/transcriptions/", response_model=List[schemas.Transcription])
-def read_transcriptions(skip: int = 0, limit: int = 10, db: Session = Depends(get_db_session)):
+def read_transcriptions(skip: int = 0, limit: int = 30, db: Session = Depends(get_db_session)):
     transcription = service.get_transcriptions(db, skip=skip, limit=limit)
     return transcription
 
