@@ -1,11 +1,11 @@
 from datetime import datetime
 from pydantic import BaseModel
-from typing import Optional
 
 
 class TranscriptionBase(BaseModel):
     file_name: str 
-    transcription_text: str 
+    transcription_text: str
+    audio_url: str
 
 
 class TranscriptionCreate(TranscriptionBase):

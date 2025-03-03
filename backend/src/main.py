@@ -1,10 +1,7 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.whisperApp.router import whisper_router
 import os
-#from database import engine, Base
-
 
 app = FastAPI()
 

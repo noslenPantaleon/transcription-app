@@ -1,16 +1,24 @@
 from sqlalchemy.orm import Session
 from . import models, schemas
 from sqlalchemy.orm import Session
-
+import os
+from fastapi import HTTPException
+from .constants import UPLOAD_DIRECTORY
 
 def get_transcription(db: Session, transcription_id: int):
     return db.query(models.Transcription).filter(models.Transcription.id == transcription_id).first()
 
+def get_audio_file(audio_url: str):
+    file_path = os.path.join(UPLOAD_DIRECTORY, audio_url)
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="Audio file not found")
+    with open(file_path, "rb") as audio_file:
+        return audio_file.read()
+
 
 def get_transcriptions(db: Session, skip: int = 0, limit: int = 10):
     return db.query(models.Transcription).offset(skip).limit(limit).all()
-
-
+   
 
 def create_transcriptions(db: Session, transcription_data: schemas.TranscriptionCreate):
     if isinstance(transcription_data, dict):
@@ -21,7 +29,6 @@ def create_transcriptions(db: Session, transcription_data: schemas.Transcription
     db.commit()
     db.refresh(db_transcriptions)
     return db_transcriptions
-
 
 
 def update_transcription(db: Session, transcription_id: int, transcription: schemas.TranscriptionUpdate):

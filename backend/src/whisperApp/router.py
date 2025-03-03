@@ -1,6 +1,6 @@
 from fastapi import File, UploadFile, HTTPException
-from fastapi.responses import JSONResponse
-from fastapi import APIRouter, Depends, File, UploadFile, BackgroundTasks
+from fastapi import APIRouter, Depends, File, UploadFile
+from fastapi.responses import FileResponse
 import os
 from tempfile import NamedTemporaryFile
 import shutil
@@ -11,13 +11,16 @@ from .dependencies import get_db_session
 from sqlalchemy.orm import Session
 from . import schemas, service
 from typing import List
+from .constants import UPLOAD_DIRECTORY
+from .utils.create_upload_directory import create_upload_directory
 
 whisper_router= APIRouter()
 model = whisper.load_model("base")
 
 @whisper_router.get("/")
 async def root():
-    return {"message": "Welcome to the Whisper Transcription API!"}
+   return {"message": "Welcome to the Whisper Transcription API!"}
+
 
 @whisper_router.get("/transcriptions/", response_model=List[schemas.Transcription])
 def read_transcriptions(skip: int = 0, limit: int = 30, db: Session = Depends(get_db_session)):
@@ -40,6 +43,15 @@ def update_transcription(transcription_id: int, transcription: schemas.Transcrip
 def delete_transcription(transcription_id: int, db: Session = Depends(get_db_session)):
     transcription = service.delete_transcription(db, transcription_id)
     return transcription
+
+
+@whisper_router.get("/audio/{audio_url}")
+def get_audio(audio_url: str):
+    file_path = os.path.join(UPLOAD_DIRECTORY, audio_url)
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="Audio file not found")
+    return FileResponse(file_path, media_type="audio/wav")
+
 
 @whisper_router.post("/transcribe/", response_model=schemas.Transcription)
 async def transcribe_audio(file: UploadFile = File(...), db: Session = Depends(get_db_session)):
@@ -64,16 +76,22 @@ async def transcribe_audio(file: UploadFile = File(...), db: Session = Depends(g
         else:
             audio_filename = temp_filename
 
+        create_upload_directory()
+        file_path = os.path.join(UPLOAD_DIRECTORY, file.filename)
+        with open(file_path, "wb") as buffer:
+            buffer.write(await file.read())
+
         # Transcribe the audio using Whisper
         result = model.transcribe(audio_filename)
         transcription = result.get("text", "No transcription available.")
-        print(transcription)
-        print(type(transcription))
+        
+        # save in database
         transcription_entry = schemas.TranscriptionCreate(
         file_name=file.filename,
-        transcription_text=transcription)
+        transcription_text=transcription,
+        audio_url=file.filename)
         db_transcription = service.create_transcriptions(db=db, transcription_data=transcription_entry)
-        return db_transcription  # This will match `schemas.Transcription`
+        return db_transcription 
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -8,8 +8,9 @@ class Transcription(Base):
     __table_args__ = {'extend_existing': True}
 
     id = Column(Integer, primary_key=True, index=True)  
-    file_name = Column(String(255), nullable=True) 
+    file_name = Column(String(255), nullable=True, unique=True, autoincrement=True)
     transcription_text = Column(Text, nullable=True)
+    audio_url= Column(String(255), nullable=True) 
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
 
 
