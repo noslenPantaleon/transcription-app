@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 //import { toast } from 'react-toastify';
-import { uploadFile } from '../services/uploadFile.js';
+import { uploadFile } from '@/services/uploadFile';
 
 interface Upload {
   file_name: string;

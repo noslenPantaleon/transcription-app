@@ -1,11 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import UploadForm from "./UploadForm";
-import TranscriptionDisplay from "./TranscriptionDisplay";
-import AudioVisualize from "./AudioVisualize";
-import { useTranscriptions } from "../hooks/useTranscriptions";
-import { Transcriptions } from "./Transcriptions";
+import UploadForm from "@/components/UploadForm";
+import TranscriptionDisplay from "@/components/TranscriptionDisplay";
+import { useTranscriptions } from "@/hooks/useTranscriptions";
+import { Transcriptions } from "@/components/Transcriptions";
 
 const TranscriptionsDashboard = () => {
   const [uploadedFile, setUploadedFile] = useState<any>(null);

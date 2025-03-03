@@ -1,5 +1,5 @@
 import React from "react";
-import AudioVisualize from "./AudioVisualize";
+import AudioVisualize from "@/components/AudioVisualize";
 
 interface TranscriptionDisplayProps {
   transcription: string | null | undefined;

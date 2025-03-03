@@ -2,9 +2,9 @@ import {
   QueryClient,
   dehydrate,
   HydrationBoundary,
-} from '@tanstack/react-query';
-import { getInverters } from '../services/getInverters';
-import React from 'react';
+} from "@tanstack/react-query";
+import { getTranscriptions } from "@/services/getTranscriptions";
+import React from "react";
 export default async function Hydration({
   children,
 }: {
@@ -19,8 +19,8 @@ export default async function Hydration({
   });
   await Promise.all([
     queryClient.prefetchQuery({
-      queryKey: ['inverter', 'inverters'],
-      queryFn: () => getInverters,
+      queryKey: ["transcriptions"],
+      queryFn: () => getTranscriptions,
     }),
   ]);
   return (
