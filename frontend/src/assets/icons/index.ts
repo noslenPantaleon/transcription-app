@@ -7,11 +7,13 @@ import IconAdd from './add.svg'
 
 
 
+
 export {
     IconMic,
     IconTrash,
     IconStop,
     IconUpload,
-    IconAdd
+    IconAdd,
 
+    
 }

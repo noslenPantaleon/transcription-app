@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Loading } from "./commons/Input/Loading";
 import { Input } from "./commons/Input/Input";
 import AudioVisualize from "./AudioVisualize";
+import { v4 as uuidv4 } from "uuid";
 
 interface UploadFormProps {
   setUploadedFile: (file: any) => void;
@@ -48,7 +49,8 @@ const UploadForm = ({ setUploadedFile }: UploadFormProps) => {
         setUploadedFile(uploadedFile);
       });
     } else if (recordedBlob) {
-      const recordedFile = new File([recordedBlob], "recording.webm", {
+      const filename = `${uuidv4()}.webm`;
+      const recordedFile = new File([recordedBlob], filename, {
         type: recordedBlob.type,
       });
       handleUpload(recordedFile).then((uploadedFile: any) => {
@@ -92,7 +94,6 @@ const UploadForm = ({ setUploadedFile }: UploadFormProps) => {
 
   const clearRecording = () => {
     setRecordedBlob(null);
-    setAudioUrl(null);
     setAudioUrlBlob(null);
     setSelectedFile(null);
     setUploadedFile(null);
