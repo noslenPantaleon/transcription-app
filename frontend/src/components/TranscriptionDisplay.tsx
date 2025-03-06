@@ -1,5 +1,6 @@
 import React from "react";
 import AudioVisualize from "@/components/AudioVisualize";
+import { Loading } from "./commons/Input/Loading";
 
 interface TranscriptionDisplayProps {
   transcription: string | null | undefined;
@@ -17,8 +18,9 @@ const TranscriptionDisplay: React.FC<TranscriptionDisplayProps> = ({
       <div className="p-6">
         <div
           className="border-2 border-solid border-sky-500 p-6 rounded-2xl shadow-lg h-fit
-        w-md"
+          w-md"
         >
+          {isLoading && <Loading />}
           <h2 className="text-2xl font-bold mb-4 text-center text-white">
             Transcription Result
           </h2>
@@ -34,7 +36,7 @@ const TranscriptionDisplay: React.FC<TranscriptionDisplayProps> = ({
         </div>
       </div>
 
-      <AudioVisualize audioUrl={audioUrl} isLoading={isLoading} />
+      <AudioVisualize audioUrl={audioUrl} />
     </section>
   );
 };

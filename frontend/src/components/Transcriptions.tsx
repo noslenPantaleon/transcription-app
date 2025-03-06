@@ -11,7 +11,7 @@ export const Transcriptions: React.FC<TranscriptionsProps> = ({
   setUploadedFile,
 }) => {
   return (
-    <div className="w-full max-w-screen-md mx-auto px-6 ">
+    <div className="w-full max-w-screen-md mx-auto px-6">
       <div className="flex justify-center px-3 py-6">
         <div className="w-full max-w-md">
           <div className="shadow-md rounded-lg px-3 py-2 mb-4 border-2 border-solid border-sky-500 p-6">
@@ -39,7 +39,7 @@ export const Transcriptions: React.FC<TranscriptionsProps> = ({
                 placeholder="Search transcription"
               />
             </div>
-            <div className="py-4 mt-5 overflow-auto h-60">
+            <div className="py-4 mt-5 overflow-auto h-56">
               {Transcriptions?.map((transcription: transcription) => (
                 <ul
                   key={transcription.id}
@@ -51,7 +51,7 @@ export const Transcriptions: React.FC<TranscriptionsProps> = ({
                     <div className="flex-grow text-sm font-medium px-2 w-56">
                       {transcription.file_name}
                     </div>
-                    <div className="text-xs text-gray-600 font-normal tracking-wide w-56">
+                    <div className="text-xs text-gray-600 font-normal tracking-wide w-40">
                       <span>
                         {new Date(transcription.created_at).toLocaleString()}
                       </span>
