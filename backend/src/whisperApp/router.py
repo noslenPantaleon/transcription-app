@@ -1,7 +1,7 @@
-from fastapi import File, UploadFile, HTTPException
-from fastapi import APIRouter, Depends, File, UploadFile
-from fastapi.responses import FileResponse
+from fastapi import File, UploadFile, HTTPException,Request,APIRouter, Depends, File, UploadFile
+from fastapi.responses import FileResponse, StreamingResponse
 import os
+import re
 from tempfile import NamedTemporaryFile
 import shutil
 import subprocess
@@ -13,6 +13,8 @@ from . import schemas, service
 from typing import List
 from .constants import UPLOAD_DIRECTORY
 from .utils.create_upload_directory import create_upload_directory
+import mimetypes
+from urllib.parse import unquote 
 
 whisper_router= APIRouter()
 model = whisper.load_model("base")
@@ -45,14 +47,6 @@ def delete_transcription(transcription_id: int, db: Session = Depends(get_db_ses
     return transcription
 
 
-@whisper_router.get("/audio/{audio_url}")
-def get_audio(audio_url: str):
-    file_path = os.path.join(UPLOAD_DIRECTORY, audio_url)
-    if not os.path.exists(file_path):
-        raise HTTPException(status_code=404, detail="Audio file not found")
-    return FileResponse(file_path, media_type="audio/wav")
-
-
 @whisper_router.post("/transcribe/", response_model=schemas.Transcription)
 async def transcribe_audio(file: UploadFile = File(...), db: Session = Depends(get_db_session)):
     # Ensure file type is audio or video
@@ -61,29 +55,35 @@ async def transcribe_audio(file: UploadFile = File(...), db: Session = Depends(g
     
     try:
         # Save the uploaded file temporarily
-        with NamedTemporaryFile(delete=False, suffix=os.path.splitext(file.filename)[-1]) as temp_media:
-            shutil.copyfileobj(file.file, temp_media)
-            temp_filename = temp_media.name
+        temp_filename = None
+        try:
+            with NamedTemporaryFile(delete=False, suffix=os.path.splitext(file.filename)[-1]) as temp_media:
+                shutil.copyfileobj(file.file, temp_media)
+                temp_filename = temp_media.name
 
-        # Convert video to audio if necessary
-        audio_filename = temp_filename.replace(os.path.splitext(temp_filename)[1], ".wav")
+            # Convert video to audio if necessary
+            audio_filename = temp_filename.replace(os.path.splitext(temp_filename)[1], ".wav")
 
-        if file.content_type.startswith("video"):
-            subprocess.run(
-                ["ffmpeg", "-i", temp_filename, "-q:a", "0", "-map", "a", audio_filename],
-                check=True
-            )
-        else:
-            audio_filename = temp_filename
+            if file.content_type.startswith("video"):
+                subprocess.run(
+                    ["ffmpeg", "-i", temp_filename, "-q:a", "0", "-map", "a", audio_filename],
+                    check=True
+                )
+            else:
+                audio_filename = temp_filename
 
-        create_upload_directory()
-        file_path = os.path.join(UPLOAD_DIRECTORY, file.filename)
-        with open(file_path, "wb") as buffer:
-            buffer.write(await file.read())
+            if not os.path.exists(UPLOAD_DIRECTORY):
+                os.makedirs(UPLOAD_DIRECTORY)
+
+            file_path = os.path.join(UPLOAD_DIRECTORY, file.filename)
+        except Exception as e:
+
+            raise HTTPException(status_code=500, detail=f"Error processing file: {e}")
 
         # Transcribe the audio using Whisper
         result = model.transcribe(audio_filename)
         transcription = result.get("text", "No transcription available.")
+        shutil.move(temp_filename, file_path)
         
         # save in database
         transcription_entry = schemas.TranscriptionCreate(
@@ -102,3 +102,84 @@ async def transcribe_audio(file: UploadFile = File(...), db: Session = Depends(g
             os.remove(temp_filename)
         if os.path.exists(audio_filename) and audio_filename != temp_filename:
             os.remove(audio_filename)
+
+
+
+def find_case_insensitive_file(directory, filename):
+    """
+    Find a file in the directory with a case-insensitive match.
+    """
+    for file in os.listdir(directory):
+        if file.lower() == filename.lower():
+            return file
+    return None
+
+
+@whisper_router.get("/audio/{audio_url}")
+async def get_audio(audio_url: str, request: Request):
+    decoded_audio_url = unquote(audio_url)
+    print(f"Decoded audio URL: {decoded_audio_url}")  # Debugging
+    
+    # Find the actual file name with case-insensitive matching
+    actual_filename = find_case_insensitive_file(UPLOAD_DIRECTORY, decoded_audio_url)
+    if not actual_filename:
+        raise HTTPException(status_code=404, detail="Audio file not found")
+    
+    file_path = os.path.join(UPLOAD_DIRECTORY, actual_filename)
+    print(f"File path: {file_path}")  # Debugging
+    
+    # Check if the file is readable
+    try:
+        with open(file_path, "rb") as f:
+            print(f"File opened successfully: {file_path}")
+    except Exception as e:
+        print(f"Error opening file: {e}")
+        raise HTTPException(status_code=500, detail="Error reading audio file")
+    
+    # Validate the MIME type
+    mime_type, _ = mimetypes.guess_type(file_path)
+    if not mime_type or not mime_type.startswith("audio/"):
+        raise HTTPException(status_code=400, detail="Unsupported file format")
+    
+    # Get the file size
+    file_size = os.path.getsize(file_path)
+    
+    # Handle range requests
+    range_header = request.headers.get("Range")
+    if range_header:
+        # Parse the range header
+        match = re.match(r"bytes=(\d+)-(\d+)?", range_header)
+        if not match:
+            raise HTTPException(status_code=416, detail="Invalid range header")
+        
+        start = int(match.group(1))
+        end = int(match.group(2)) if match.group(2) else file_size - 1
+
+        # Validate the range
+        if start >= file_size or end >= file_size or start > end:
+            raise HTTPException(status_code=416, detail="Range not satisfiable")
+        
+        # Open the file and stream the requested range
+        def file_iterator():
+            with open(file_path, "rb") as f:
+                f.seek(start)
+                remaining = end - start + 1
+                while remaining > 0:
+                    chunk_size = min(4096, remaining)
+                    chunk = f.read(chunk_size)
+                    if not chunk:
+                        break
+                    yield chunk
+                    remaining -= chunk_size
+        
+        # Return a StreamingResponse with the partial content
+        headers = {
+            "Content-Range": f"bytes {start}-{end}/{file_size}",
+            "Accept-Ranges": "bytes",
+            "Content-Length": str(end - start + 1),
+        }
+        return StreamingResponse(file_iterator(), status_code=206, headers=headers, media_type=mime_type)
+    
+    else:
+        # If no range header, return the entire file
+        return FileResponse(file_path, media_type=mime_type)

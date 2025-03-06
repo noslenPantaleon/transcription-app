@@ -4,8 +4,8 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
-import { getTranscriptions } from "./services/getTranscriptions";
-import TranscriptionsDashboard from "./components/TranscriptionsDashboard";
+import { getTranscriptions } from "@/services/getTranscriptions";
+import TranscriptionsDashboard from "@/components/TranscriptionsDashboard";
 
 export default async function Home() {
   const queryClient = new QueryClient();
