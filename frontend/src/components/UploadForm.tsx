@@ -7,13 +7,13 @@ import Image from "next/image";
 import { Loading } from "./commons/Input/Loading";
 import { Input } from "./commons/Input/Input";
 import AudioVisualize from "./AudioVisualize";
+import { v4 as uuidv4 } from "uuid";
 
 interface UploadFormProps {
   setUploadedFile: (file: any) => void;
-  setAudioUrl: (url: string | null) => void;
 }
 
-const UploadForm = ({ setUploadedFile, setAudioUrl }: UploadFormProps) => {
+const UploadForm = ({ setUploadedFile }: UploadFormProps) => {
   const { handleUpload, isPending, error } = useUploadFile();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isRecording, setIsRecording] = useState(false);
@@ -39,7 +39,6 @@ const UploadForm = ({ setUploadedFile, setAudioUrl }: UploadFormProps) => {
       setSelectedFile(file);
       const url = URL.createObjectURL(file);
       setAudioUrlBlob(url);
-      setAudioUrl(url);
     }
   };
 
@@ -50,7 +49,8 @@ const UploadForm = ({ setUploadedFile, setAudioUrl }: UploadFormProps) => {
         setUploadedFile(uploadedFile);
       });
     } else if (recordedBlob) {
-      const recordedFile = new File([recordedBlob], "recording.webm", {
+      const filename = `${uuidv4()}.webm`;
+      const recordedFile = new File([recordedBlob], filename, {
         type: recordedBlob.type,
       });
       handleUpload(recordedFile).then((uploadedFile: any) => {
@@ -75,7 +75,6 @@ const UploadForm = ({ setUploadedFile, setAudioUrl }: UploadFormProps) => {
         const blob = new Blob(chunks, { type: "audio/webm" });
         setRecordedBlob(blob);
         const url = URL.createObjectURL(blob);
-        setAudioUrl(url);
         setAudioUrlBlob(url);
       };
 
@@ -95,7 +94,6 @@ const UploadForm = ({ setUploadedFile, setAudioUrl }: UploadFormProps) => {
 
   const clearRecording = () => {
     setRecordedBlob(null);
-    setAudioUrl(null);
     setAudioUrlBlob(null);
     setSelectedFile(null);
     setUploadedFile(null);
@@ -144,17 +142,6 @@ const UploadForm = ({ setUploadedFile, setAudioUrl }: UploadFormProps) => {
       )} */}
 
       <div className="flex items-center justify-center gap-4 h-40 w-full ">
-        {/* {recordedBlob && (
-          <div
-            onClick={playRecordedAudio}
-            className="flex items-center justify-center flex-col gap-4 cursor-pointer  text-white py-4 px-4 "
-          >
-            <div className="w-10">
-              <Image src={IconStop} alt="Icon mic" />
-            </div>
-            <p> play Recording</p>
-          </div>
-        )} */}
         {!isRecording ? (
           <div
             onClick={startRecording}

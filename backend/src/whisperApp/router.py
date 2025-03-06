@@ -36,15 +36,18 @@ def get_transcription_id(transcription_id: int, db: Session = Depends(get_db_ses
         raise HTTPException(status_code=404, detail="Transcription not found")
     return transcription
 
-@whisper_router.post("/transcription/update{transcription_id}", response_model=schemas.TranscriptionUpdate)
+@whisper_router.put("/transcription/update/{transcription_id}", response_model=schemas.TranscriptionUpdate)
 def update_transcription(transcription_id: int, transcription: schemas.TranscriptionUpdate, db: Session = Depends(get_db_session)):
+    print("trasnscription:", transcription)
+
     updated_transcription = service.update_transcription(db, transcription_id, transcription)
     return updated_transcription
 
-@whisper_router.delete("/transcriptions/delete{transcription_id}", response_model=schemas.Transcription)
+@whisper_router.delete("/transcription/delete/{transcription_id}", response_model=schemas.Transcription)
 def delete_transcription(transcription_id: int, db: Session = Depends(get_db_session)):
     transcription = service.delete_transcription(db, transcription_id)
     return transcription
+
 
 
 @whisper_router.post("/transcribe/", response_model=schemas.Transcription)
@@ -138,7 +141,7 @@ async def get_audio(audio_url: str, request: Request):
     
     # Validate the MIME type
     mime_type, _ = mimetypes.guess_type(file_path)
-    if not mime_type or not mime_type.startswith("audio/"):
+    if not mime_type or not (mime_type.startswith("audio/") or mime_type == "video/webm"):
         raise HTTPException(status_code=400, detail="Unsupported file format")
     
     # Get the file size

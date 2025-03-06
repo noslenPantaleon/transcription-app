@@ -18,7 +18,7 @@ def get_audio_file(audio_url: str):
 
 def get_transcriptions(db: Session, skip: int = 0, limit: int = 10):
     return db.query(models.Transcription).offset(skip).limit(limit).all()
-   
+
 
 def create_transcriptions(db: Session, transcription_data: schemas.TranscriptionCreate):
     if isinstance(transcription_data, dict):

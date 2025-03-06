@@ -12,12 +12,9 @@ import AudioPlayer from "./AudioPlayer";
 
 const TranscriptionsDashboard = () => {
   const [uploadedFile, setUploadedFile] = useState<transcription>(null);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
-  const { audioUrlBlob, isLoading, refetch } = useFetchAudio(
-    uploadedFile?.file_name
-  );
+  const { audioUrlBlob, refetch } = useFetchAudio(uploadedFile?.audio_url);
 
-  const { data, error } = useTranscriptions();
+  const { data, error, isLoading } = useTranscriptions();
 
   useEffect(() => {
     if (uploadedFile) {
@@ -27,7 +24,7 @@ const TranscriptionsDashboard = () => {
 
   return (
     <div className="text-white min-h-screen max-w-screen flex flex-col  justify-center p-4 md:flex-row gap-4">
-      <UploadForm setUploadedFile={setUploadedFile} setAudioUrl={setAudioUrl} />
+      <UploadForm setUploadedFile={setUploadedFile} />
       <TranscriptionDisplay
         transcription={uploadedFile?.transcription_text}
         audioUrl={audioUrlBlob}

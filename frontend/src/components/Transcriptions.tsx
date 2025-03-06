@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { transcription } from "@/types/transcription";
+import { useDeleteTranscription } from "@/hooks/useDeleteTranscription";
+import UpdateTranscriptionForm from "@/components/UpdateTranscriptionForm";
 
 type TranscriptionsProps = {
   Transcriptions: transcription[];
@@ -10,8 +12,21 @@ export const Transcriptions: React.FC<TranscriptionsProps> = ({
   Transcriptions,
   setUploadedFile,
 }) => {
+  const { handleDelete, isPending: isDeletePending } = useDeleteTranscription();
+  const [selectedTranscription, setSelectedTranscription] =
+    useState<transcription | null>(null);
+  const [iconHover, setIconHover] = useState(false);
+
+  const handleUpdate = (transcription: transcription) => {
+    setSelectedTranscription(transcription);
+  };
+
+  const handleCloseUpdateForm = () => {
+    setSelectedTranscription(null);
+  };
+
   return (
-    <div className="w-full max-w-screen-md mx-auto px-6 ">
+    <div className="w-full max-w-screen-md mx-auto px-6">
       <div className="flex justify-center px-3 py-6">
         <div className="w-full max-w-md">
           <div className="shadow-md rounded-lg px-3 py-2 mb-4 border-2 border-solid border-sky-500 p-6">
@@ -39,30 +54,87 @@ export const Transcriptions: React.FC<TranscriptionsProps> = ({
                 placeholder="Search transcription"
               />
             </div>
-            <div className="py-4 mt-5 overflow-auto h-60">
+            <div className="py-4 mt-5 overflow-auto h-56">
               {Transcriptions?.map((transcription: transcription) => (
-                <ul
-                  key={transcription.id}
-                  onClick={() => setUploadedFile(transcription)}
-                  className="text-gray-200 hover:text-white hover:bg-indigo-500"
-                >
-                  <div className="flex gap-2 justify-start cursor-pointer rounded-md px-2 py-2 my-2">
-                    <span className="bg-gray-400 h-2 w-2 m-2 rounded-full"></span>
-                    <div className="flex-grow text-sm font-medium px-2 w-56">
-                      {transcription.file_name}
+                <div key={transcription.id}>
+                  <ul
+                    onClick={() => setUploadedFile(transcription)}
+                    className="text-gray-200 hover:text-white hover:bg-indigo-500"
+                  >
+                    <div className="flex gap-4 justify-start items-start cursor-pointer rounded-md px-2 py-2 my-2">
+                      <div>
+                        <span className="bg-gray-400 h-2 w-2 m-auto rounded-full"></span>
+                        <div className="flex-grow text-sm font-medium  w-56 m-auto">
+                          {transcription.file_name}
+                        </div>
+                        <div className="text-xs m-auto py-2 text-gray-600 font-normal tracking-wide">
+                          <span>
+                            {new Date(
+                              transcription.created_at
+                            ).toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div
+                        className="w-6 m-auto"
+                        onClick={() => handleDelete(transcription.id)}
+                        onMouseEnter={() => setIconHover(!false)}
+                      >
+                        <svg
+                          className="hover:stroke-pink-600"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="white"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          width="24"
+                          height="24"
+                          strokeWidth="2"
+                        >
+                          <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
+                          <path d="M9 12l6 0"></path>
+                        </svg>
+                      </div>
+
+                      <div
+                        className="w-6 m-auto"
+                        onClick={() => handleUpdate(transcription)}
+                      >
+                        <svg
+                          className="hover:stroke-yellow-500"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="white"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          width="24"
+                          height="24"
+                          strokeWidth="2"
+                        >
+                          <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>{" "}
+                          <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>{" "}
+                          <path d="M16 5l3 3"></path>{" "}
+                        </svg>
+                      </div>
                     </div>
-                    <div className="text-xs text-gray-600 font-normal tracking-wide w-56">
-                      <span>
-                        {new Date(transcription.created_at).toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
-                </ul>
+                    <hr className="border-neutral-700" />
+                  </ul>
+                </div>
               ))}
             </div>
           </div>
         </div>
       </div>
+
+      {selectedTranscription && (
+        <UpdateTranscriptionForm
+          transcription={selectedTranscription}
+          onClose={handleCloseUpdateForm}
+        />
+      )}
     </div>
   );
 };

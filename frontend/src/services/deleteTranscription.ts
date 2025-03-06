@@ -1,11 +1,12 @@
 import axios from 'axios';
 
-const deleteTranscription = async (id: string, data: any) => {
+
+const deleteTranscription = async (transcriptionId: number): Promise<void> => {
     try {
-        const response = await axios.post(`http://localhost:8000/transcriptions/delete${id}`, data);
+        const response = await axios.delete(`http://localhost:8000/transcription/delete/${transcriptionId}`);
         return response.data;
     } catch (error) {
-        console.error('Error updating transcription:', error);
+        console.error('Error deleting transcription:', error);
         throw error;
     }
 };

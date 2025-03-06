@@ -10,14 +10,14 @@ const WavesurferPlayer = dynamic(() => import("@wavesurfer/react"), {
 
 interface AudioVisualizeProps {
   audioUrl: string;
-  isLoading?: boolean;
 }
 
-const AudioVisualize = ({ audioUrl, isLoading }: AudioVisualizeProps) => {
+const AudioVisualize = ({ audioUrl }: AudioVisualizeProps) => {
   const [wavesurfer, setWavesurfer] = useState<any>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playTime, setPlayTime] = useState("0:00");
   const [duration, setDuration] = useState("0:00");
+  const [isLoading, setIsLoading] = useState(false);
 
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
@@ -29,6 +29,7 @@ const AudioVisualize = ({ audioUrl, isLoading }: AudioVisualizeProps) => {
   const onReady = (ws: any) => {
     setWavesurfer(ws);
     setIsPlaying(false);
+    setIsLoading(false);
   };
 
   const onPlayPause = () => {
@@ -51,12 +52,18 @@ const AudioVisualize = ({ audioUrl, isLoading }: AudioVisualizeProps) => {
         onPause={() => setIsPlaying(false)}
         onTimeupdate={(time) => setPlayTime(formatTime(time.getCurrentTime()))}
         onDecode={(Decoding) => setDuration(formatTime(Decoding.getDuration()))}
+        onLoading={() => setIsLoading(true)}
       />
 
       <div className="rounded-lg shadow-md w-80">
         <div className="flex justify-center items-center">
-          {isLoading && <Loading />}
-          {audioUrl && (
+          {isLoading && (
+            <div>
+              <Loading />
+            </div>
+          )}
+
+          {audioUrl && !isLoading && (
             <button
               className="p-4 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none mx-4"
               onClick={onPlayPause}

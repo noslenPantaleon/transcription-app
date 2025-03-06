@@ -12,8 +12,10 @@ class TranscriptionCreate(TranscriptionBase):
     pass
 
 
-class TranscriptionUpdate(TranscriptionBase):
-    pass
+class TranscriptionUpdate(BaseModel):
+    file_name: str  
+    transcription_text: str 
+  
 
 
 class TranscriptionInDBBase(TranscriptionBase):
