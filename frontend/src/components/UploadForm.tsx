@@ -6,6 +6,7 @@ import { IconMic, IconStop, IconTrash } from "../assets/icons";
 import Image from "next/image";
 import { Loading } from "./commons/Input/Loading";
 import { Input } from "./commons/Input/Input";
+import AudioVisualize from "./AudioVisualize";
 
 interface UploadFormProps {
   setUploadedFile: (file: any) => void;
@@ -17,6 +18,7 @@ const UploadForm = ({ setUploadedFile, setAudioUrl }: UploadFormProps) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
+  const [audioUrlBlob, setAudioUrlBlob] = useState<string | null>(null);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -36,6 +38,7 @@ const UploadForm = ({ setUploadedFile, setAudioUrl }: UploadFormProps) => {
       const file = event.target.files[0];
       setSelectedFile(file);
       const url = URL.createObjectURL(file);
+      setAudioUrlBlob(url);
       setAudioUrl(url);
     }
   };
@@ -73,6 +76,7 @@ const UploadForm = ({ setUploadedFile, setAudioUrl }: UploadFormProps) => {
         setRecordedBlob(blob);
         const url = URL.createObjectURL(blob);
         setAudioUrl(url);
+        setAudioUrlBlob(url);
       };
 
       mediaRecorderRef.current.start();
@@ -92,6 +96,7 @@ const UploadForm = ({ setUploadedFile, setAudioUrl }: UploadFormProps) => {
   const clearRecording = () => {
     setRecordedBlob(null);
     setAudioUrl(null);
+    setAudioUrlBlob(null);
     setSelectedFile(null);
     setUploadedFile(null);
 
@@ -118,7 +123,38 @@ const UploadForm = ({ setUploadedFile, setAudioUrl }: UploadFormProps) => {
         setClearInput={(func) => (clearInputRef.current = func)}
       />
 
+      {/* {recordedBlob && (
+        <div classNameName="flex items-center justify-center gap-4 h-40 w-full dark:bg-gray-800 dark:text-white">
+          <button
+            onClick={playRecordedAudio}
+            classNameName="flex items-center justify-center flex-col gap-4 cursor-pointer text-white py-4 px-4 dark:bg-indigo-700 dark:hover:bg-indigo-500"
+          >
+            <div classNameName="w-10">
+              <Image src={IconMic} alt="Icon mic" />
+            </div>
+            <p> Play Recording</p>
+          </button>
+          <audio
+            ref={audioRef}
+            controls
+            src={URL.createObjectURL(recordedBlob)}
+            classNameName="background-blue"
+          />
+        </div>
+      )} */}
+
       <div className="flex items-center justify-center gap-4 h-40 w-full ">
+        {/* {recordedBlob && (
+          <div
+            onClick={playRecordedAudio}
+            className="flex items-center justify-center flex-col gap-4 cursor-pointer  text-white py-4 px-4 "
+          >
+            <div className="w-10">
+              <Image src={IconStop} alt="Icon mic" />
+            </div>
+            <p> play Recording</p>
+          </div>
+        )} */}
         {!isRecording ? (
           <div
             onClick={startRecording}
@@ -162,7 +198,7 @@ const UploadForm = ({ setUploadedFile, setAudioUrl }: UploadFormProps) => {
 
       {selectedFile &&
         (!isPending ? (
-          <p className="text-yellow-400 text-xs"> Recording ready to upload:</p>
+          <p className="text-yellow-400 text-xs">Recording ready to upload:</p>
         ) : (
           ""
         ))}
@@ -182,6 +218,7 @@ const UploadForm = ({ setUploadedFile, setAudioUrl }: UploadFormProps) => {
           create transcription
         </button>
       )}
+      <AudioVisualize audioUrl={audioUrlBlob} />
     </form>
   );
 };

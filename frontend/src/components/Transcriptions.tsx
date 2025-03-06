@@ -1,5 +1,5 @@
-import React from "react";
-import { transcription } from "../types/transcription";
+import React, { useState } from "react";
+import { transcription } from "@/types/transcription";
 
 type TranscriptionsProps = {
   Transcriptions: transcription[];
@@ -12,10 +12,10 @@ export const Transcriptions: React.FC<TranscriptionsProps> = ({
 }) => {
   return (
     <div className="w-full max-w-screen-md mx-auto px-6 ">
-      <div className="flex justify-center p-4 px-3 py-10">
+      <div className="flex justify-center px-3 py-6">
         <div className="w-full max-w-md">
-          <div className="shadow-md rounded-lg px-3 py-2 mb-4 border-2 border-solid border-sky-500 p-6 rounded-2xl">
-            <div className="block text-white text-lg font-semibold py-2 px-4 ">
+          <div className="shadow-md rounded-lg px-3 py-2 mb-4 border-2 border-solid border-sky-500 p-6">
+            <div className="block text-white text-lg font-semibold py-4 px-4 ">
               Transcriptions Recorded
             </div>
 
@@ -39,19 +39,19 @@ export const Transcriptions: React.FC<TranscriptionsProps> = ({
                 placeholder="Search transcription"
               />
             </div>
-            <div className="py-4 mt-5 overflow-y-scroll h-80">
+            <div className="py-4 mt-5 overflow-auto h-60">
               {Transcriptions?.map((transcription: transcription) => (
                 <ul
                   key={transcription.id}
                   onClick={() => setUploadedFile(transcription)}
                   className="text-gray-200 hover:text-white hover:bg-indigo-500"
                 >
-                  <div className="flex overflow-auto  justify-start cursor-pointer rounded-md px-2 py-2 my-2">
+                  <div className="flex gap-2 justify-start cursor-pointer rounded-md px-2 py-2 my-2">
                     <span className="bg-gray-400 h-2 w-2 m-2 rounded-full"></span>
-                    <div className="flex-grow text-sm font-medium px-2 w-1/2">
+                    <div className="flex-grow text-sm font-medium px-2 w-56">
                       {transcription.file_name}
                     </div>
-                    <div className="text-xs text-gray-600 font-normal tracking-wide">
+                    <div className="text-xs text-gray-600 font-normal tracking-wide w-56">
                       <span>
                         {new Date(transcription.created_at).toLocaleString()}
                       </span>
