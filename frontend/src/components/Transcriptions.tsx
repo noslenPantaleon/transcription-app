@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { transcription } from "@/types/transcription";
 import { useDeleteTranscription } from "@/hooks/useDeleteTranscription";
 import UpdateTranscriptionForm from "@/components/UpdateTranscriptionForm";
+import ConfirmationModal from "./commons/Input/ConfirmationModal";
 
 type TranscriptionsProps = {
   Transcriptions: transcription[];
@@ -15,7 +16,10 @@ export const Transcriptions: React.FC<TranscriptionsProps> = ({
   const { handleDelete, isPending: isDeletePending } = useDeleteTranscription();
   const [selectedTranscription, setSelectedTranscription] =
     useState<transcription | null>(null);
-  const [iconHover, setIconHover] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTranscriptionId, setSelectedTranscriptionId] = useState<
+    number | null
+  >(null);
 
   const handleUpdate = (transcription: transcription) => {
     setSelectedTranscription(transcription);
@@ -23,6 +27,23 @@ export const Transcriptions: React.FC<TranscriptionsProps> = ({
 
   const handleCloseUpdateForm = () => {
     setSelectedTranscription(null);
+  };
+
+  const openModal = (id: number) => {
+    setSelectedTranscriptionId(id);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedTranscriptionId(null);
+  };
+
+  const handleConfirmDelete = () => {
+    if (selectedTranscriptionId !== null) {
+      handleDelete(selectedTranscriptionId);
+    }
+    closeModal();
   };
 
   return (
@@ -78,8 +99,7 @@ export const Transcriptions: React.FC<TranscriptionsProps> = ({
 
                       <div
                         className="w-6 m-auto"
-                        onClick={() => handleDelete(transcription.id)}
-                        onMouseEnter={() => setIconHover(!false)}
+                        onClick={() => openModal(transcription.id)}
                       >
                         <svg
                           className="hover:stroke-pink-600"
@@ -129,6 +149,15 @@ export const Transcriptions: React.FC<TranscriptionsProps> = ({
         </div>
       </div>
 
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onConfirm={handleConfirmDelete}
+        title="Confirm Deletion"
+        message="Are you sure you want to delete this transcription? This action cannot be undone."
+        confirmButtonText="Delete"
+        cancelButtonText="Cancel"
+      />
       {selectedTranscription && (
         <UpdateTranscriptionForm
           transcription={selectedTranscription}
