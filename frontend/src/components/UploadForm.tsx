@@ -24,6 +24,12 @@ const UploadForm = ({ setUploadedFile }: UploadFormProps) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
+    if (isRecording) {
+      setUploadedFile(null);
+    }
+  }, [isRecording]);
+
+  useEffect(() => {
     return () => {
       if (mediaRecorderRef.current) {
         mediaRecorderRef.current.stream
@@ -110,7 +116,7 @@ const UploadForm = ({ setUploadedFile }: UploadFormProps) => {
 
   return (
     <form
-      className="p-6 rounded-2xl shadow-lg w-full max-w-md"
+      className=" rounded-2xl shadow-lg m-auto lg:m-0 p-6  md:w-full max-w-md"
       onSubmit={handleSubmit}
     >
       <Input
@@ -120,26 +126,6 @@ const UploadForm = ({ setUploadedFile }: UploadFormProps) => {
         fileType="MP4 WAV MP3"
         setClearInput={(func) => (clearInputRef.current = func)}
       />
-
-      {/* {recordedBlob && (
-        <div classNameName="flex items-center justify-center gap-4 h-40 w-full dark:bg-gray-800 dark:text-white">
-          <button
-            onClick={playRecordedAudio}
-            classNameName="flex items-center justify-center flex-col gap-4 cursor-pointer text-white py-4 px-4 dark:bg-indigo-700 dark:hover:bg-indigo-500"
-          >
-            <div classNameName="w-10">
-              <Image src={IconMic} alt="Icon mic" />
-            </div>
-            <p> Play Recording</p>
-          </button>
-          <audio
-            ref={audioRef}
-            controls
-            src={URL.createObjectURL(recordedBlob)}
-            classNameName="background-blue"
-          />
-        </div>
-      )} */}
 
       <div className="flex items-center justify-center gap-4 h-40 w-full ">
         {!isRecording ? (

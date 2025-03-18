@@ -20,5 +20,26 @@ export default {
       
     },
   },
-  plugins: [],
+  plugins: [
+    function ({addUtilities}){
+      const newUtilities={
+        ".scrollbar-webkit":{
+          "&::-webkit-scrollbar":{
+            width: "5px",
+            height:"2px"
+          },
+           "&::-webkit-scrollbar-track":{
+            background: "lightyellow"
+           },
+              "&::-webkit-scrollbar-thumb":{
+                backgroundColor: "#483D8B",
+                borderRadius: "40px",
+                width: "2px",
+              
+              },
+        },
+      }
+      addUtilities(newUtilities, ["responsive", "hover"])
+    },
+  ],
 } satisfies Config;

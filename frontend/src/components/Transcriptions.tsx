@@ -75,7 +75,7 @@ export const Transcriptions: React.FC<TranscriptionsProps> = ({
                 placeholder="Search transcription"
               />
             </div>
-            <div className="py-4 mt-5 overflow-auto h-56">
+            <div className="py-4 mt-5 overflow-auto h-56 scrollbar-webkit">
               {Transcriptions?.map((transcription: transcription) => (
                 <div key={transcription.id}>
                   <ul

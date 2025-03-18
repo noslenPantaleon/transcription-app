@@ -61,14 +61,14 @@ export const Input: React.FC<Props> = ({
     }
   };
   return (
-    <div className="flex items-center justify-center w-full py-2">
+    <div className="flex items-center justify-center w-72 md:w-full py-2">
       <label
         htmlFor="dropzone-file"
         onDragEnter={handleDragEnter}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:bg-indigo-900 relative"
+        className="flex flex-col items-center justify-center min-w-72 m-auto h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:bg-indigo-900 relative"
       >
         <div className="flex flex-col items-center justify-center pt-5 pb-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           {!isDragging ? (

@@ -38,7 +38,7 @@ const AudioVisualize = ({ audioUrl }: AudioVisualizeProps) => {
 
   return (
     <div className="flex flex-col mt-8">
-      <div className="flex justify-between">
+      <div className="flex justify-between p-2">
         {audioUrl && <h3>{playTime}</h3>}
         {audioUrl && <h3>{duration}</h3>}
       </div>
@@ -55,7 +55,7 @@ const AudioVisualize = ({ audioUrl }: AudioVisualizeProps) => {
         onLoading={() => setIsLoading(true)}
       />
 
-      <div className="rounded-lg shadow-md w-80">
+      <div className="rounded-lg  mt-auto">
         <div className="flex justify-center items-center">
           {isLoading && (
             <div>

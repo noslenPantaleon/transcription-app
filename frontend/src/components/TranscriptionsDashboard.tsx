@@ -23,7 +23,7 @@ const TranscriptionsDashboard = () => {
   }, [uploadedFile]);
 
   return (
-    <div className="text-white min-h-screen max-w-screen flex flex-col  justify-center p-4 md:flex-row gap-4">
+    <div className="text-white min-h-screen max-w-screen flex flex-col  justify-center p-6 md:flex-row gap-4">
       <UploadForm setUploadedFile={setUploadedFile} />
       <TranscriptionDisplay
         transcription={uploadedFile?.transcription_text}
