@@ -20,6 +20,7 @@ export const Transcriptions: React.FC<TranscriptionsProps> = ({
   const [selectedTranscriptionId, setSelectedTranscriptionId] = useState<
     number | null
   >(null);
+  const [filteredFile, setFilteredFile] = useState(Transcriptions);
 
   const handleUpdate = (transcription: transcription) => {
     setSelectedTranscription(transcription);
@@ -44,6 +45,13 @@ export const Transcriptions: React.FC<TranscriptionsProps> = ({
       handleDelete(selectedTranscriptionId);
     }
     closeModal();
+  };
+
+  const handleSearch = (input: string) => {
+    const filtered = Transcriptions.filter((transcription) =>
+      transcription.file_name.toLowerCase().includes(input.toLowerCase())
+    );
+    setFilteredFile(filtered);
   };
 
   return (
@@ -73,10 +81,11 @@ export const Transcriptions: React.FC<TranscriptionsProps> = ({
                 id="search"
                 type="text"
                 placeholder="Search transcription"
+                onChange={(e) => handleSearch(e.target.value)}
               />
             </div>
             <div className="py-4 mt-5 overflow-auto h-56 scrollbar-webkit">
-              {Transcriptions?.map((transcription: transcription) => (
+              {filteredFile?.map((transcription: transcription) => (
                 <div key={transcription.id}>
                   <ul
                     onClick={() => setUploadedFile(transcription)}
