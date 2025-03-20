@@ -191,7 +191,7 @@ const UploadForm = ({ setUploadedFile }: UploadFormProps) => {
           create transcription
         </button>
       )}
-      <AudioVisualize audioUrl={audioUrlBlob} />
+      {recordedBlob && <AudioVisualize audioUrl={audioUrlBlob} />}
     </form>
   );
 };

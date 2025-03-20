@@ -32,9 +32,11 @@ const TranscriptionDisplay: React.FC<TranscriptionDisplayProps> = ({
           )}
         </div>
       </div>
-      <div className="max-w-72 m-auto">
-        <AudioVisualize audioUrl={audioUrl} />
-      </div>
+      {audioUrl && (
+        <div className="max-w-72 m-auto">
+          <AudioVisualize audioUrl={audioUrl} />
+        </div>
+      )}
     </section>
   );
 };
