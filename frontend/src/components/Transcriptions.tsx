@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { transcription } from "@/types/transcription";
 import { useDeleteTranscription } from "@/hooks/useDeleteTranscription";
 import UpdateTranscriptionForm from "@/components/UpdateTranscriptionForm";
@@ -21,6 +21,10 @@ export const Transcriptions: React.FC<TranscriptionsProps> = ({
     number | null
   >(null);
   const [filteredFile, setFilteredFile] = useState(Transcriptions);
+
+  useEffect(() => {
+    setFilteredFile(Transcriptions);
+  }, [Transcriptions]);
 
   const handleUpdate = (transcription: transcription) => {
     setSelectedTranscription(transcription);

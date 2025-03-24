@@ -55,7 +55,8 @@ const UploadForm = ({ setUploadedFile }: UploadFormProps) => {
         setUploadedFile(uploadedFile);
       });
     } else if (recordedBlob) {
-      const filename = `${uuidv4()}.webm`;
+      const shortUuid = uuidv4().split("-")[0];
+      const filename = `audio_capture_${shortUuid}.webm`;
       const recordedFile = new File([recordedBlob], filename, {
         type: recordedBlob.type,
       });
