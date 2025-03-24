@@ -8,8 +8,6 @@ import { Transcriptions } from "@/components/Transcriptions";
 import { useFetchAudio } from "@/hooks/useFetchAudio";
 import { transcription } from "@/types/transcription";
 
-import AudioPlayer from "./AudioPlayer";
-
 const TranscriptionsDashboard = () => {
   const [uploadedFile, setUploadedFile] = useState<transcription>(null);
   const { audioUrlBlob, refetch } = useFetchAudio(uploadedFile?.audio_url);
